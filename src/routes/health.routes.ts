@@ -1,10 +1,7 @@
 import { Router } from "express";
 
+import { getHealthStatus } from "../controllers/health.controller";
+
 export const healthRouter = Router();
 
-healthRouter.get("/health", (_request, response) => {
-  response.status(200).json({
-    status: "ok",
-    service: "salesguard-api"
-  });
-});
+healthRouter.get("/", getHealthStatus);

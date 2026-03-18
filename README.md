@@ -8,12 +8,15 @@ Base tecnica inicial del backend para el Proyecto Integrador.
 - `npm run build`: compila TypeScript a `dist/`
 - `npm start`: ejecuta el build compilado
 
-## Endpoint inicial
+## Endpoints iniciales
 
-- `GET /health`
+- `GET /api/health`
 
 ## Estructura base
 
+- `src/config/`: configuracion compartida del proyecto
+- `src/controllers/`: controladores HTTP
+- `src/middlewares/`: middlewares globales
 - `src/app.ts`: configuracion principal de Express
 - `src/server.ts`: arranque del servidor
 - `src/routes/`: rutas iniciales del proyecto
