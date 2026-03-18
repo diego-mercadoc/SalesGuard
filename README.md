@@ -11,6 +11,7 @@ Base tecnica inicial del backend para el Proyecto Integrador.
 ## Endpoints iniciales
 
 - `GET /api/health`
+- `GET /docs`
 
 ## Estructura base
 
@@ -21,3 +22,8 @@ Base tecnica inicial del backend para el Proyecto Integrador.
 - `src/server.ts`: arranque del servidor
 - `src/routes/`: rutas iniciales del proyecto
 - `docs/`: documentacion tecnica del proyecto
+
+## Documentacion
+
+- `docs/architecture-initial.md`: arquitectura inicial del backend
+- `docs/database-design-initial.md`: diseno inicial de base de datos
