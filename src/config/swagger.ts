@@ -15,9 +15,53 @@ export const swaggerDocument = {
     {
       name: "Health",
       description: "Health checks del servicio"
+    },
+    {
+      name: "System",
+      description: "Informacion general de la API"
     }
   ],
   paths: {
+    "/api": {
+      get: {
+        tags: ["System"],
+        summary: "Consultar informacion base de la API",
+        responses: {
+          "200": {
+            description: "Informacion general del servicio",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    name: {
+                      type: "string",
+                      example: "SalesGuard API"
+                    },
+                    version: {
+                      type: "string",
+                      example: "1.0.0"
+                    },
+                    environment: {
+                      type: "string",
+                      example: "development"
+                    },
+                    docs: {
+                      type: "string",
+                      example: "/docs"
+                    },
+                    health: {
+                      type: "string",
+                      example: "/api/health"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/health": {
       get: {
         tags: ["Health"],

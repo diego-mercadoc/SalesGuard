@@ -10,6 +10,7 @@ Base tecnica inicial del backend para el Proyecto Integrador.
 
 ## Endpoints iniciales
 
+- `GET /api`
 - `GET /api/health`
 - `GET /docs`
 
@@ -27,3 +28,5 @@ Base tecnica inicial del backend para el Proyecto Integrador.
 
 - `docs/architecture-initial.md`: arquitectura inicial del backend
 - `docs/database-design-initial.md`: diseno inicial de base de datos
+- `docs/demo-checklist.md`: guia breve para presentar Sprint 1
+- `docs/sprint-2-plan.md`: objetivos propuestos para el siguiente sprint
