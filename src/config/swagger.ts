@@ -1,60 +1,55 @@
 export const swaggerDocument = {
   openapi: "3.0.3",
   info: {
-    title: "SalesGuard API",
+    title: "SalesGuard API - Anomaly Detection System",
     version: "1.0.0",
-    description: "API inicial para deteccion de anomalias en ventas diarias"
+    description:
+      "API para detección de anomalías en ventas diarias. Esta documentación permite visualizar y probar los endpoints disponibles del sistema durante el desarrollo."
   },
   servers: [
     {
       url: "http://localhost:3000",
-      description: "Local development server"
+      description: "Servidor local de desarrollo"
     }
   ],
   tags: [
     {
-      name: "Health",
-      description: "Health checks del servicio"
+      name: "System",
+      description: "Endpoints de información general de la API"
     },
     {
-      name: "System",
-      description: "Informacion general de la API"
+      name: "Health",
+      description: "Endpoints para verificar el estado del servicio"
+    },
+    {
+      name: "Datasets",
+      description: "Endpoints planeados para carga y consulta de datasets"
     }
   ],
   paths: {
     "/api": {
       get: {
         tags: ["System"],
-        summary: "Consultar informacion base de la API",
+        summary: "Obtiene información general de la API",
+        description:
+          "Devuelve datos básicos del servicio, incluyendo versión, entorno actual y rutas útiles para documentación y monitoreo.",
         responses: {
           "200": {
-            description: "Informacion general del servicio",
+            description: "Información general del servicio obtenida correctamente",
             content: {
               "application/json": {
                 schema: {
-                  type: "object",
-                  properties: {
-                    name: {
-                      type: "string",
-                      example: "SalesGuard API"
-                    },
-                    version: {
-                      type: "string",
-                      example: "1.0.0"
-                    },
-                    environment: {
-                      type: "string",
-                      example: "development"
-                    },
-                    docs: {
-                      type: "string",
-                      example: "/docs"
-                    },
-                    health: {
-                      type: "string",
-                      example: "/api/health"
-                    }
-                  }
+                  $ref: "#/components/schemas/ApiOverviewResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            description: "Error interno del servidor",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -65,28 +60,77 @@ export const swaggerDocument = {
     "/api/health": {
       get: {
         tags: ["Health"],
-        summary: "Consultar estado del servicio",
+        summary: "Verifica el estado del servidor",
+        description:
+          "Permite confirmar que la API está activa y funcionando correctamente. Es útil para pruebas, monitoreo y validación del entorno.",
         responses: {
           "200": {
-            description: "Servicio disponible",
+            description: "Servidor disponible y funcionando correctamente",
             content: {
               "application/json": {
                 schema: {
-                  type: "object",
-                  properties: {
-                    status: {
-                      type: "string",
-                      example: "ok"
-                    },
-                    service: {
-                      type: "string",
-                      example: "salesguard-api"
-                    },
-                    environment: {
-                      type: "string",
-                      example: "development"
-                    }
+                  $ref: "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            description: "Error interno del servidor",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/datasets/upload": {
+      post: {
+        tags: ["Datasets"],
+        summary: "Sube un archivo CSV de ventas",
+        description:
+          "Endpoint planeado para cargar un archivo CSV con ventas diarias y procesarlo dentro del sistema.",
+        requestBody: {
+          required: true,
+          content: {
+            "multipart/form-data": {
+              schema: {
+                type: "object",
+                required: ["file"],
+                properties: {
+                  file: {
+                    type: "string",
+                    format: "binary",
+                    description: "Archivo CSV con registros de ventas diarias"
                   }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          "201": {
+            description: "Archivo cargado correctamente"
+          },
+          "400": {
+            description: "Archivo inválido o faltante",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            description: "Error interno del servidor",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -97,6 +141,62 @@ export const swaggerDocument = {
   },
   components: {
     schemas: {
+      ApiOverviewResponse: {
+        type: "object",
+        properties: {
+          name: {
+            type: "string",
+            example: "SalesGuard API"
+          },
+          version: {
+            type: "string",
+            example: "1.0.0"
+          },
+          environment: {
+            type: "string",
+            example: "development"
+          },
+          docs: {
+            type: "string",
+            example: "/docs"
+          },
+          health: {
+            type: "string",
+            example: "/api/health"
+          }
+        }
+      },
+      HealthResponse: {
+        type: "object",
+        properties: {
+          status: {
+            type: "string",
+            example: "ok"
+          },
+          service: {
+            type: "string",
+            example: "salesguard-api"
+          },
+          environment: {
+            type: "string",
+            example: "development"
+          },
+          timestamp: {
+            type: "string",
+            format: "date-time",
+            example: "2026-03-20T18:30:00.000Z"
+          }
+        }
+      },
+      ErrorResponse: {
+        type: "object",
+        properties: {
+          message: {
+            type: "string",
+            example: "Internal server error"
+          }
+        }
+      },
       User: {
         type: "object",
         properties: {
