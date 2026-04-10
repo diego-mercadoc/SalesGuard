@@ -72,6 +72,22 @@ export const updateUser = async (request: Request, response: Response): Promise<
     return;
   }
 
+  const existingUser = await prisma.user.findUnique({ where: { id } });
+
+  if (!existingUser) {
+    response.status(404).json({ message: "User not found" });
+    return;
+  }
+
+  if (email && email !== existingUser.email) {
+    const emailOwner = await prisma.user.findUnique({ where: { email } });
+
+    if (emailOwner) {
+      response.status(409).json({ message: "Email is already registered" });
+      return;
+    }
+  }
+
   const user = await prisma.user.update({
     where: { id },
     data: {
@@ -94,6 +110,13 @@ export const deleteUser = async (request: Request, response: Response): Promise<
 
   if (!id) {
     response.status(400).json({ message: "Invalid user id" });
+    return;
+  }
+
+  const existingUser = await prisma.user.findUnique({ where: { id } });
+
+  if (!existingUser) {
+    response.status(404).json({ message: "User not found" });
     return;
   }
 
