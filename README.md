@@ -49,3 +49,4 @@ Base tecnica inicial del backend para el Proyecto Integrador.
 - `docs/demo-checklist.md`: guia breve para presentar Sprint 1
 - `docs/notion-board-alignment.md`: alineacion entre tablero de Notion y trabajo implementado
 - `docs/sprint-2-plan.md`: objetivos propuestos para el siguiente sprint
+- `docs/sprint-3-plan.md`: objetivos propuestos para el Sprint 3
