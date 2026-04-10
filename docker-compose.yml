@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: salesguard-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: salesguard
+      POSTGRES_PASSWORD: salesguard
+      POSTGRES_DB: salesguard
+    ports:
+      - "5432:5432"
+    volumes:
+      - salesguard_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  salesguard_postgres_data:
