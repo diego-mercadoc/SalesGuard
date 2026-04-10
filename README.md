@@ -21,6 +21,9 @@ Base tecnica inicial del backend para el Proyecto Integrador.
 ## Endpoints iniciales
 
 - `GET /api`
+- `POST /api/auth/register`
+- `POST /api/auth/login`
+- `GET /api/auth/me`
 - `GET /api/health`
 - `GET /docs`
 

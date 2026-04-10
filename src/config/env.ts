@@ -21,5 +21,6 @@ const parsePort = (value: string | undefined): number => {
 export const env = {
   nodeEnv: process.env.NODE_ENV ?? "development",
   port: parsePort(process.env.PORT),
-  apiPrefix: process.env.API_PREFIX ?? "/api"
+  apiPrefix: process.env.API_PREFIX ?? "/api",
+  jwtSecret: process.env.JWT_SECRET ?? "salesguard_dev_secret"
 };
