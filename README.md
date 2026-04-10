@@ -44,6 +44,7 @@ Base tecnica inicial del backend para el Proyecto Integrador.
 ## Documentacion
 
 - `docs/architecture-initial.md`: arquitectura inicial del backend
+- `docs/database-diagram.md`: diagrama de base de datos del Sprint 2
 - `docs/database-design-initial.md`: diseno inicial de base de datos
 - `docs/demo-checklist.md`: guia breve para presentar Sprint 1
 - `docs/notion-board-alignment.md`: alineacion entre tablero de Notion y trabajo implementado

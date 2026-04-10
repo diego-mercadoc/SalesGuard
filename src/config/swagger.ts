@@ -1,56 +1,33 @@
 export const swaggerDocument = {
   openapi: "3.0.3",
   info: {
-    title: "SalesGuard API - Anomaly Detection System",
+    title: "SalesGuard API",
     version: "1.0.0",
-    description:
-      "API para detección de anomalías en ventas diarias. Esta documentación permite visualizar y probar los endpoints disponibles del sistema durante el desarrollo."
+    description: "API para detectar anomalias en ventas diarias."
   },
   servers: [
     {
       url: "http://localhost:3000",
-      description: "Servidor local de desarrollo"
+      description: "Servidor local"
     }
   ],
   tags: [
-    {
-      name: "System",
-      description: "Endpoints de información general de la API"
-    },
-    {
-      name: "Health",
-      description: "Endpoints para verificar el estado del servicio"
-    },
-    {
-      name: "Datasets",
-      description: "Endpoints planeados para carga y consulta de datasets"
-    }
+    { name: "System", description: "Informacion general de la API" },
+    { name: "Health", description: "Estado del servidor" },
+    { name: "Auth", description: "Registro, login y usuario actual" },
+    { name: "Users", description: "CRUD basico de usuarios" }
   ],
   paths: {
     "/api": {
       get: {
         tags: ["System"],
-        summary: "Obtiene información general de la API",
-        description:
-          "Devuelve datos básicos del servicio, incluyendo versión, entorno actual y rutas útiles para documentación y monitoreo.",
+        summary: "Informacion base de la API",
         responses: {
           "200": {
-            description: "Información general del servicio obtenida correctamente",
+            description: "Informacion general del servicio",
             content: {
               "application/json": {
-                schema: {
-                  $ref: "#/components/schemas/ApiOverviewResponse"
-                }
-              }
-            }
-          },
-          "500": {
-            description: "Error interno del servidor",
-            content: {
-              "application/json": {
-                schema: {
-                  $ref: "#/components/schemas/ErrorResponse"
-                }
+                schema: { $ref: "#/components/schemas/ApiOverviewResponse" }
               }
             }
           }
@@ -60,225 +37,196 @@ export const swaggerDocument = {
     "/api/health": {
       get: {
         tags: ["Health"],
-        summary: "Verifica el estado del servidor",
-        description:
-          "Permite confirmar que la API está activa y funcionando correctamente. Es útil para pruebas, monitoreo y validación del entorno.",
+        summary: "Health check del servidor",
         responses: {
           "200": {
-            description: "Servidor disponible y funcionando correctamente",
+            description: "Servidor funcionando",
             content: {
               "application/json": {
-                schema: {
-                  $ref: "#/components/schemas/HealthResponse"
-                }
-              }
-            }
-          },
-          "500": {
-            description: "Error interno del servidor",
-            content: {
-              "application/json": {
-                schema: {
-                  $ref: "#/components/schemas/ErrorResponse"
-                }
+                schema: { $ref: "#/components/schemas/HealthResponse" }
               }
             }
           }
         }
       }
     },
-    "/api/datasets/upload": {
+    "/api/auth/register": {
       post: {
-        tags: ["Datasets"],
-        summary: "Sube un archivo CSV de ventas",
-        description:
-          "Endpoint planeado para cargar un archivo CSV con ventas diarias y procesarlo dentro del sistema.",
+        tags: ["Auth"],
+        summary: "Registrar usuario",
         requestBody: {
           required: true,
           content: {
-            "multipart/form-data": {
-              schema: {
-                type: "object",
-                required: ["file"],
-                properties: {
-                  file: {
-                    type: "string",
-                    format: "binary",
-                    description: "Archivo CSV con registros de ventas diarias"
-                  }
-                }
-              }
+            "application/json": {
+              schema: { $ref: "#/components/schemas/AuthRequest" }
             }
           }
         },
         responses: {
-          "201": {
-            description: "Archivo cargado correctamente"
-          },
-          "400": {
-            description: "Archivo inválido o faltante",
-            content: {
-              "application/json": {
-                schema: {
-                  $ref: "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "500": {
-            description: "Error interno del servidor",
-            content: {
-              "application/json": {
-                schema: {
-                  $ref: "#/components/schemas/ErrorResponse"
-                }
-              }
+          "201": { description: "Usuario registrado" },
+          "400": { description: "Datos invalidos" },
+          "409": { description: "Email ya registrado" }
+        }
+      }
+    },
+    "/api/auth/login": {
+      post: {
+        tags: ["Auth"],
+        summary: "Iniciar sesion",
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: { $ref: "#/components/schemas/AuthRequest" }
             }
           }
+        },
+        responses: {
+          "200": { description: "Login correcto" },
+          "400": { description: "Datos faltantes" },
+          "401": { description: "Credenciales invalidas" }
+        }
+      }
+    },
+    "/api/auth/me": {
+      get: {
+        tags: ["Auth"],
+        summary: "Obtener usuario actual",
+        security: [{ bearerAuth: [] }],
+        responses: {
+          "200": { description: "Usuario autenticado" },
+          "401": { description: "Token faltante o invalido" }
+        }
+      }
+    },
+    "/api/users": {
+      get: {
+        tags: ["Users"],
+        summary: "Listar usuarios",
+        security: [{ bearerAuth: [] }],
+        responses: {
+          "200": { description: "Listado de usuarios" },
+          "401": { description: "Token faltante o invalido" }
+        }
+      }
+    },
+    "/api/users/{id}": {
+      get: {
+        tags: ["Users"],
+        summary: "Consultar usuario por id",
+        security: [{ bearerAuth: [] }],
+        parameters: [{ $ref: "#/components/parameters/UserId" }],
+        responses: {
+          "200": { description: "Usuario encontrado" },
+          "404": { description: "Usuario no encontrado" }
+        }
+      },
+      patch: {
+        tags: ["Users"],
+        summary: "Editar usuario",
+        security: [{ bearerAuth: [] }],
+        parameters: [{ $ref: "#/components/parameters/UserId" }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: { $ref: "#/components/schemas/UpdateUserRequest" }
+            }
+          }
+        },
+        responses: {
+          "200": { description: "Usuario actualizado" },
+          "400": { description: "Datos invalidos" },
+          "404": { description: "Usuario no encontrado" }
+        }
+      },
+      delete: {
+        tags: ["Users"],
+        summary: "Eliminar usuario",
+        security: [{ bearerAuth: [] }],
+        parameters: [{ $ref: "#/components/parameters/UserId" }],
+        responses: {
+          "204": { description: "Usuario eliminado" },
+          "404": { description: "Usuario no encontrado" }
         }
       }
     }
   },
   components: {
+    securitySchemes: {
+      bearerAuth: {
+        type: "http",
+        scheme: "bearer",
+        bearerFormat: "JWT"
+      }
+    },
+    parameters: {
+      UserId: {
+        name: "id",
+        in: "path",
+        required: true,
+        schema: {
+          type: "integer",
+          example: 1
+        }
+      }
+    },
     schemas: {
       ApiOverviewResponse: {
         type: "object",
         properties: {
-          name: {
-            type: "string",
-            example: "SalesGuard API"
-          },
-          version: {
-            type: "string",
-            example: "1.0.0"
-          },
-          environment: {
-            type: "string",
-            example: "development"
-          },
-          docs: {
-            type: "string",
-            example: "/docs"
-          },
-          health: {
-            type: "string",
-            example: "/api/health"
-          }
+          name: { type: "string", example: "SalesGuard API" },
+          version: { type: "string", example: "1.0.0" },
+          environment: { type: "string", example: "development" },
+          docs: { type: "string", example: "/docs" },
+          health: { type: "string", example: "/api/health" }
         }
       },
       HealthResponse: {
         type: "object",
         properties: {
-          status: {
-            type: "string",
-            example: "ok"
-          },
-          service: {
-            type: "string",
-            example: "salesguard-api"
-          },
-          environment: {
-            type: "string",
-            example: "development"
-          },
+          status: { type: "string", example: "ok" },
+          service: { type: "string", example: "salesguard-api" },
+          environment: { type: "string", example: "development" },
           timestamp: {
             type: "string",
             format: "date-time",
-            example: "2026-03-20T18:30:00.000Z"
+            example: "2026-04-10T18:30:00.000Z"
+          }
+        }
+      },
+      AuthRequest: {
+        type: "object",
+        required: ["email", "password"],
+        properties: {
+          email: { type: "string", example: "demo@salesguard.com" },
+          password: { type: "string", example: "secret123" }
+        }
+      },
+      UpdateUserRequest: {
+        type: "object",
+        properties: {
+          email: { type: "string", example: "updated@salesguard.com" },
+          role: { type: "string", example: "admin" }
+        }
+      },
+      User: {
+        type: "object",
+        properties: {
+          id: { type: "integer", example: 1 },
+          email: { type: "string", example: "demo@salesguard.com" },
+          role: { type: "string", example: "user" },
+          createdAt: {
+            type: "string",
+            format: "date-time",
+            example: "2026-04-10T18:30:00.000Z"
           }
         }
       },
       ErrorResponse: {
         type: "object",
         properties: {
-          message: {
-            type: "string",
-            example: "Internal server error"
-          }
-        }
-      },
-      User: {
-        type: "object",
-        properties: {
-          id: {
-            type: "integer",
-            example: 1
-          },
-          email: {
-            type: "string",
-            example: "user@example.com"
-          },
-          role: {
-            type: "string",
-            example: "admin"
-          }
-        }
-      },
-      Dataset: {
-        type: "object",
-        properties: {
-          id: {
-            type: "integer",
-            example: 1
-          },
-          name: {
-            type: "string",
-            example: "ventas-marzo"
-          },
-          userId: {
-            type: "integer",
-            example: 1
-          }
-        }
-      },
-      DailySales: {
-        type: "object",
-        properties: {
-          id: {
-            type: "integer",
-            example: 1
-          },
-          datasetId: {
-            type: "integer",
-            example: 1
-          },
-          date: {
-            type: "string",
-            format: "date",
-            example: "2026-03-18"
-          },
-          dailySales: {
-            type: "number",
-            format: "float",
-            example: 15420.5
-          }
-        }
-      },
-      Anomaly: {
-        type: "object",
-        properties: {
-          id: {
-            type: "integer",
-            example: 1
-          },
-          datasetId: {
-            type: "integer",
-            example: 1
-          },
-          date: {
-            type: "string",
-            format: "date",
-            example: "2026-03-18"
-          },
-          score: {
-            type: "number",
-            format: "float",
-            example: 2.87
-          },
-          severity: {
-            type: "string",
-            example: "high"
-          }
+          message: { type: "string", example: "Internal server error" }
         }
       }
     }
