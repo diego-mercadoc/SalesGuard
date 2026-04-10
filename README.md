@@ -25,6 +25,10 @@ Base tecnica inicial del backend para el Proyecto Integrador.
 - `POST /api/auth/login`
 - `GET /api/auth/me`
 - `GET /api/health`
+- `GET /api/users`
+- `GET /api/users/:id`
+- `PATCH /api/users/:id`
+- `DELETE /api/users/:id`
 - `GET /docs`
 
 ## Estructura base
