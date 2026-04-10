@@ -6,7 +6,17 @@ Base tecnica inicial del backend para el Proyecto Integrador.
 
 - `npm run dev`: ejecuta el servidor en desarrollo
 - `npm run build`: compila TypeScript a `dist/`
+- `npm run db:generate`: genera el cliente de Prisma
+- `npm run db:migrate`: aplica migraciones en desarrollo
+- `npm run db:studio`: abre Prisma Studio
 - `npm start`: ejecuta el build compilado
+
+## Base de datos local
+
+1. Copiar `.env.example` a `.env`
+2. Ejecutar `docker compose up -d`
+3. Ejecutar `npm run db:generate`
+4. Ejecutar `npm run db:migrate`
 
 ## Endpoints iniciales
 
