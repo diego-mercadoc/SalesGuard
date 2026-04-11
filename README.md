@@ -27,6 +27,12 @@ Base tecnica inicial del backend para el Proyecto Integrador.
 - `GET /api/auth/me`
 - `GET /docs`
 
+## Documentacion publica
+
+- Swagger UI: [`/docs`](http://localhost:3000/docs)
+- Diagrama de base de datos: [`docs/database-diagram.md`](docs/database-diagram.md)
+- Plan de Sprint 3: [`docs/sprint-3-plan.md`](docs/sprint-3-plan.md)
+
 ## Endpoints de autenticacion
 
 ### `POST /api/auth/register`
@@ -145,7 +151,9 @@ Validaciones basicas:
 ## Documentacion
 
 - `docs/architecture-initial.md`: arquitectura inicial del backend
+- `docs/database-diagram.md`: diagrama de base de datos del Sprint 2
 - `docs/database-design-initial.md`: diseno inicial de base de datos
 - `docs/demo-checklist.md`: guia breve para presentar Sprint 1
 - `docs/notion-board-alignment.md`: alineacion entre tablero de Notion y trabajo implementado
 - `docs/sprint-2-plan.md`: objetivos propuestos para el siguiente sprint
+- `docs/sprint-3-plan.md`: objetivos propuestos para el Sprint 3
