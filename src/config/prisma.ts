@@ -1,3 +1,8 @@
+import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@prisma/client";
 
-export const prisma = new PrismaClient();
+import { env } from "./env";
+
+const adapter = new PrismaPg(env.databaseUrl);
+
+export const prisma = new PrismaClient({ adapter });
