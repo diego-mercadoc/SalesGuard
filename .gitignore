@@ -4,3 +4,7 @@ dist/
 coverage/
 *.log
 .private/
+.DS_Store
+.idea/
+
+/src/generated/prisma

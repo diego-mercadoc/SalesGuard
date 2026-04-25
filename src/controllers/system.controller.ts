@@ -6,6 +6,11 @@ export const getApiOverview = (_req: Request, res: Response): void => {
     version: "1.0.0",
     environment: process.env.NODE_ENV || "development",
     docs: "/docs",
-    health: "/api/health"
+    health: "/api/health",
+    auth: {
+      register: "/api/auth/register",
+      login: "/api/auth/login",
+      me: "/api/auth/me"
+    }
   });
 };
