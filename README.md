@@ -172,6 +172,13 @@ El endpoint `POST /api/anomalies/run/:datasetId` hace lo siguiente:
 - Diagrama de base de datos: [`docs/database-diagram.md`](docs/database-diagram.md)
 - Plan de Sprint 3: [`docs/sprint-3-plan.md`](docs/sprint-3-plan.md)
 
+## Entrega Sprint 3
+
+- Evidencias del sprint: [`evidencias-sprint-3.html`](evidencias-sprint-3.html)
+- Checklist de demo: [`docs/demo-checklist.md`](docs/demo-checklist.md)
+- Planeacion de Sprint 4: [`docs/sprint-4-plan.md`](docs/sprint-4-plan.md)
+- Pull request base `sprint3-core`: `https://github.com/diego-mercadoc/SalesGuard/pull/2`
+
 ## Estructura base
 
 - `src/config/`: configuracion compartida del proyecto
