@@ -13,6 +13,47 @@ model User {
   role         String   @default("user")
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
+  datasets     Dataset[]
 
   @@map("users")
+}
+
+model Dataset {
+  id          Int          @id @default(autoincrement())
+  name        String
+  description String?
+  userId      Int          @map("user_id")
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
+  user        User         @relation(fields: [userId], references: [id])
+  dailySales  DailySales[]
+  anomalies   Anomaly[]
+
+  @@map("datasets")
+}
+
+model DailySales {
+  id         Int      @id @default(autoincrement())
+  datasetId  Int      @map("dataset_id")
+  date       DateTime @db.Date
+  dailySales Decimal  @map("daily_sales") @db.Decimal(12, 2)
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  dataset    Dataset  @relation(fields: [datasetId], references: [id])
+
+  @@unique([datasetId, date])
+  @@map("daily_sales")
+}
+
+model Anomaly {
+  id        Int      @id @default(autoincrement())
+  datasetId Int      @map("dataset_id")
+  date      DateTime @db.Date
+  value     Decimal  @db.Decimal(12, 2)
+  score     Decimal  @db.Decimal(8, 4)
+  severity  String
+  createdAt DateTime @default(now()) @map("created_at")
+  dataset   Dataset  @relation(fields: [datasetId], references: [id])
+
+  @@map("anomalies")
 }
