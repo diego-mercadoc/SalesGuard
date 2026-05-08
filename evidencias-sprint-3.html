@@ -1,0 +1,640 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SalesGuard - Evidencias Sprint 3</title>
+    <style>
+      :root {
+        --bg: #f4f0e8;
+        --paper: #fffdf8;
+        --ink: #172033;
+        --muted: #5e6675;
+        --line: #d8d1c5;
+        --accent: #0f766e;
+        --accent-2: #134e4a;
+        --accent-soft: #ebfffb;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: Georgia, "Times New Roman", serif;
+        background:
+          radial-gradient(circle at top right, rgba(15, 118, 110, 0.1), transparent 28%),
+          linear-gradient(180deg, #efe8dc 0%, var(--bg) 100%);
+        color: var(--ink);
+      }
+
+      .page {
+        width: min(980px, calc(100vw - 32px));
+        margin: 32px auto;
+        background: var(--paper);
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        box-shadow: 0 16px 40px rgba(23, 32, 51, 0.08);
+        overflow: hidden;
+      }
+
+      .hero {
+        padding: 56px 56px 36px;
+        background: linear-gradient(135deg, var(--accent-2) 0%, var(--accent) 100%);
+        color: #f4fbfa;
+      }
+
+      .eyebrow {
+        margin: 0 0 10px;
+        font-size: 12px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        opacity: 0.8;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(36px, 6vw, 62px);
+        line-height: 0.95;
+      }
+
+      .subtitle {
+        margin: 16px 0 0;
+        font-size: 20px;
+        color: #d7f6f2;
+      }
+
+      .meta {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 28px;
+      }
+
+      .meta-card {
+        padding: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .meta-card strong,
+      .section h2,
+      .shot h3 {
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      .meta-card span {
+        display: block;
+        margin-top: 6px;
+        color: #edfdfa;
+      }
+
+      .content {
+        padding: 40px 56px 56px;
+      }
+
+      .section + .section {
+        margin-top: 40px;
+      }
+
+      .section h2 {
+        margin: 0 0 14px;
+        font-size: 22px;
+        color: var(--accent);
+      }
+
+      .section p,
+      .section li {
+        font-size: 17px;
+        line-height: 1.65;
+      }
+
+      .section ul,
+      .section ol {
+        margin: 12px 0 0 22px;
+        padding: 0;
+      }
+
+      .callout {
+        padding: 16px 18px;
+        background: var(--accent-soft);
+        border-left: 4px solid var(--accent);
+        border-radius: 10px;
+      }
+
+      .diagram,
+      .link-card {
+        margin-top: 16px;
+        padding: 18px;
+        background: #fbfaf7;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        overflow: auto;
+        font-size: 16px;
+      }
+
+      .link-card a {
+        color: var(--accent-2);
+        word-break: break-word;
+      }
+
+      pre {
+        margin: 0;
+        font-family: "Courier New", Courier, monospace;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+      }
+
+      .shot {
+        margin-top: 16px;
+        padding: 16px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: #fff;
+      }
+
+      .shot h3 {
+        margin: 0 0 8px;
+        font-size: 18px;
+      }
+
+      .shot p {
+        margin: 0 0 12px;
+        color: var(--muted);
+        font-size: 15px;
+      }
+
+      .shot img {
+        width: 100%;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+        background: #f3f4f6;
+        display: block;
+      }
+
+      .upload-label {
+        display: inline-block;
+        margin: 0 0 12px;
+        padding: 10px 14px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: #f4fffd;
+        color: var(--accent-2);
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 14px;
+        cursor: pointer;
+      }
+
+      .upload-input {
+        display: none;
+      }
+
+      .placeholder {
+        padding: 24px 18px;
+        border: 1px dashed var(--line);
+        border-radius: 10px;
+        background: #faf8f3;
+        color: var(--muted);
+        text-align: center;
+        font-size: 14px;
+      }
+
+      .footer {
+        margin-top: 36px;
+        padding-top: 18px;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      code {
+        font-family: "Courier New", Courier, monospace;
+        font-size: 0.95em;
+      }
+
+      @media print {
+        body {
+          background: #fff;
+        }
+
+        .page {
+          width: 100%;
+          margin: 0;
+          box-shadow: none;
+          border: 0;
+          border-radius: 0;
+        }
+
+        .hero,
+        .content {
+          padding-left: 32px;
+          padding-right: 32px;
+        }
+      }
+
+      @media (max-width: 760px) {
+        .hero,
+        .content {
+          padding-left: 22px;
+          padding-right: 22px;
+        }
+
+        .meta,
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <section class="hero">
+        <p class="eyebrow">Proyecto Integrador</p>
+        <h1>SalesGuard</h1>
+        <p class="subtitle">Evidencias de Sprint 3</p>
+
+        <div class="meta">
+          <div class="meta-card">
+            <strong>Integrantes</strong>
+            <span>Juan Pablo Blanco Lemus</span>
+            <span>Diego Mercado Coello</span>
+            <span>Juan Pablo Blanco</span>
+          </div>
+          <div class="meta-card">
+            <strong>Materia</strong>
+            <span>Tecnologias de Servidor</span>
+          </div>
+          <div class="meta-card">
+            <strong>Enfoque</strong>
+            <span>Backend CORE</span>
+          </div>
+          <div class="meta-card">
+            <strong>Fecha</strong>
+            <span>25 de abril de 2026</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="content">
+        <section class="section">
+          <h2>1. Objetivos del Sprint 3</h2>
+          <p>
+            Durante este sprint el equipo avanzo sobre la parte funcional CORE de SalesGuard para
+            pasar de una base de autenticacion a un flujo real de carga, almacenamiento y analisis
+            de ventas.
+          </p>
+          <ul>
+            <li>Registrar datasets de ventas asociados a un usuario.</li>
+            <li>Guardar ventas diarias por fecha dentro de cada dataset.</li>
+            <li>Ejecutar un analisis estadistico simple con z-score.</li>
+            <li>Persistir anomalias detectadas dentro de la base de datos.</li>
+            <li>Enviar una notificacion por email o mostrar un modo demo claro.</li>
+            <li>Actualizar Swagger, README y artefactos de presentacion.</li>
+          </ul>
+          <div class="callout">
+            El sprint deja un flujo funcional de extremo a extremo: autenticacion, dataset,
+            ventas diarias, deteccion de anomalias y evidencia documentada para la revision.
+          </div>
+        </section>
+
+        <section class="section">
+          <h2>2. Trabajo del Equipo</h2>
+          <ul>
+            <li>
+              <strong>Juan Pablo Blanco:</strong> modelos base de Prisma para
+              <code>Dataset</code>, <code>DailySales</code> y <code>Anomaly</code>, relaciones y
+              middleware <code>requireAdmin</code>.
+            </li>
+            <li>
+              <strong>Diego Mercado:</strong> CRUD de datasets, proteccion con
+              <code>authenticateToken</code> y control de permisos en borrado.
+            </li>
+            <li>
+              <strong>Carlos Moreno:</strong> CRUD de ventas diarias, modulo de anomalias,
+              analisis con z-score, email simple, Swagger, README, demo y planeacion de Sprint 4.
+            </li>
+          </ul>
+        </section>
+
+        <section class="section">
+          <h2>3. Arquitectura Mantenida</h2>
+          <p>
+            Se conservo la estructura simple del proyecto para mantener el backend entendible y
+            facil de presentar:
+          </p>
+          <div class="diagram">
+            <pre>src/
+├── config/
+├── controllers/
+├── middlewares/
+└── routes/</pre>
+          </div>
+          <ul>
+            <li>Sin capas extra como services, repositories o DTOs.</li>
+            <li>Prisma usado directo en controllers.</li>
+            <li>Rutas protegidas con JWT y permisos basicos de admin en borrado.</li>
+          </ul>
+        </section>
+
+        <section class="section">
+          <h2>4. Modelo de Datos del Sprint 3</h2>
+          <div class="diagram">
+            <pre>+----------------+      +----------------+      +----------------+
+| users          | 1  N | datasets       | 1  N | daily_sales    |
++----------------+------+-_--------------+------+-_--------------+
+| id             |      | id             |      | id             |
+| email          |      | name           |      | dataset_id     |
+| password_hash  |      | description    |      | date           |
+| role           |      | user_id        |      | daily_sales    |
+| created_at     |      | created_at     |      | created_at     |
+| updated_at     |      | updated_at     |      | updated_at     |
++----------------+      +----------------+      +----------------+
+                                |
+                                | 1
+                                | N
+                         +----------------+
+                         | anomalies      |
+                         +----------------+
+                         | id             |
+                         | dataset_id     |
+                         | date           |
+                         | value          |
+                         | score          |
+                         | severity       |
+                         | created_at     |
+                         +----------------+</pre>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2>5. Funcionalidades Implementadas</h2>
+          <ul>
+            <li>CRUD completo de datasets.</li>
+            <li>CRUD completo de ventas diarias.</li>
+            <li>Consulta de anomalias guardadas.</li>
+            <li>Analisis por dataset con promedio, desviacion estandar y z-score.</li>
+            <li>Deteccion de anomalias cuando <code>abs(zScore) &gt;= 2</code>.</li>
+            <li>Guardado de anomalias en la tabla <code>anomalies</code>.</li>
+            <li>Email simple con <code>nodemailer</code> o modo demo por consola.</li>
+            <li>Swagger actualizado para endpoints de datasets, daily sales y anomalies.</li>
+          </ul>
+        </section>
+
+        <section class="section">
+          <h2>6. Endpoints del Sprint</h2>
+          <ul>
+            <li><code>GET /api/datasets</code></li>
+            <li><code>GET /api/datasets/:id</code></li>
+            <li><code>POST /api/datasets</code></li>
+            <li><code>PUT /api/datasets/:id</code></li>
+            <li><code>DELETE /api/datasets/:id</code></li>
+            <li><code>GET /api/daily-sales</code></li>
+            <li><code>GET /api/daily-sales/:id</code></li>
+            <li><code>POST /api/daily-sales</code></li>
+            <li><code>PUT /api/daily-sales/:id</code></li>
+            <li><code>DELETE /api/daily-sales/:id</code></li>
+            <li><code>GET /api/anomalies</code></li>
+            <li><code>GET /api/anomalies/:id</code></li>
+            <li><code>POST /api/anomalies/run/:datasetId</code></li>
+          </ul>
+        </section>
+
+        <section class="section">
+          <h2>7. Flujo de Analisis y Notificacion</h2>
+          <ol>
+            <li>El usuario inicia sesion y obtiene su token.</li>
+            <li>Se crea un dataset para registrar un conjunto de ventas.</li>
+            <li>Se insertan varias ventas diarias con fecha y monto.</li>
+            <li>El endpoint de analisis toma las ventas del dataset.</li>
+            <li>Calcula promedio, desviacion estandar y z-score.</li>
+            <li>Guarda las ventas atipicas como anomalias.</li>
+            <li>Si hay configuracion SMTP, envia correo; si no, deja evidencia en consola.</li>
+          </ol>
+        </section>
+
+        <section class="section">
+          <h2>8. Evidencia del Trabajo del Equipo</h2>
+          <p>
+            La evidencia tecnica del sprint incluye ramas de trabajo, commits por integrante y el
+            pull request base donde se consolido <code>sprint3-core</code>.
+          </p>
+          <div class="link-card">
+            <p><strong>Repositorio:</strong></p>
+            <a href="https://github.com/diego-mercadoc/SalesGuard">
+              https://github.com/diego-mercadoc/SalesGuard
+            </a>
+            <p><strong>Pull request base sprint3-core:</strong></p>
+            <a href="https://github.com/diego-mercadoc/SalesGuard/pull/2">
+              https://github.com/diego-mercadoc/SalesGuard/pull/2
+            </a>
+            <p><strong>Ramas usadas por el equipo:</strong></p>
+            <ul>
+              <li><code>juanpablo-sprint3-schema-auth</code></li>
+              <li><code>diego-sprint3-datasets</code></li>
+              <li><code>carlos-sprint3-sales-anomalies-docs</code></li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2>9. Demo de Postman</h2>
+          <p>
+            Estas capturas deben mostrar el flujo central del sprint. Al final se puede exportar
+            el documento como PDF desde el navegador.
+          </p>
+          <div class="callout">
+            Da clic en cada boton para cargar tu screenshot desde tu computadora. Cuando termines,
+            exporta el documento con <code>Imprimir &gt; Guardar como PDF</code>.
+          </div>
+
+          <div class="grid">
+            <article class="shot">
+              <h3>POST /api/auth/login</h3>
+              <p>Credenciales validas y token generado.</p>
+              <label class="upload-label" for="postman-login">Cargar captura</label>
+              <input class="upload-input" id="postman-login" type="file" accept="image/*" data-target="preview-postman-login" />
+              <div class="placeholder">Selecciona aqui la captura del login.</div>
+              <img id="preview-postman-login" alt="Prueba login en Postman" style="display:none" />
+            </article>
+
+            <article class="shot">
+              <h3>POST /api/datasets</h3>
+              <p>Creacion del dataset para la corrida del analisis.</p>
+              <label class="upload-label" for="postman-dataset-create">Cargar captura</label>
+              <input class="upload-input" id="postman-dataset-create" type="file" accept="image/*" data-target="preview-postman-dataset-create" />
+              <div class="placeholder">Selecciona aqui la captura de creacion del dataset.</div>
+              <img id="preview-postman-dataset-create" alt="Creacion de dataset en Postman" style="display:none" />
+            </article>
+
+            <article class="shot">
+              <h3>POST /api/daily-sales</h3>
+              <p>Registro de varias ventas diarias dentro del dataset.</p>
+              <label class="upload-label" for="postman-daily-sales-create">Cargar captura</label>
+              <input class="upload-input" id="postman-daily-sales-create" type="file" accept="image/*" data-target="preview-postman-daily-sales-create" />
+              <div class="placeholder">Selecciona aqui la captura de ventas diarias.</div>
+              <img id="preview-postman-daily-sales-create" alt="Creacion de ventas diarias en Postman" style="display:none" />
+            </article>
+
+            <article class="shot">
+              <h3>POST /api/anomalies/run/:datasetId</h3>
+              <p>Respuesta del analisis con promedio, desviacion y anomalias detectadas.</p>
+              <label class="upload-label" for="postman-anomaly-run">Cargar captura</label>
+              <input class="upload-input" id="postman-anomaly-run" type="file" accept="image/*" data-target="preview-postman-anomaly-run" />
+              <div class="placeholder">Selecciona aqui la captura del analisis.</div>
+              <img id="preview-postman-anomaly-run" alt="Analisis de anomalias en Postman" style="display:none" />
+            </article>
+
+            <article class="shot">
+              <h3>GET /api/anomalies</h3>
+              <p>Consulta de las anomalias guardadas en la base de datos.</p>
+              <label class="upload-label" for="postman-anomalies-list">Cargar captura</label>
+              <input class="upload-input" id="postman-anomalies-list" type="file" accept="image/*" data-target="preview-postman-anomalies-list" />
+              <div class="placeholder">Selecciona aqui la captura del listado de anomalias.</div>
+              <img id="preview-postman-anomalies-list" alt="Listado de anomalias en Postman" style="display:none" />
+            </article>
+
+            <article class="shot">
+              <h3>Email demo por consola</h3>
+              <p>Captura sugerida del log en consola cuando no hay SMTP configurado.</p>
+              <label class="upload-label" for="console-email-demo">Cargar captura</label>
+              <input class="upload-input" id="console-email-demo" type="file" accept="image/*" data-target="preview-console-email-demo" />
+              <div class="placeholder">Selecciona aqui la captura del modo demo de email.</div>
+              <img id="preview-console-email-demo" alt="Email demo en consola" style="display:none" />
+            </article>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2>10. Evidencia en Swagger</h2>
+          <p>
+            La documentacion interactiva se puede revisar en
+            <code>http://localhost:3000/docs</code> y debe mostrar los tres modulos nuevos del
+            sprint.
+          </p>
+
+          <div class="grid">
+            <article class="shot">
+              <h3>Vista general de Swagger</h3>
+              <p>Captura general de categorias y seguridad Bearer.</p>
+              <label class="upload-label" for="swagger-overview">Cargar captura</label>
+              <input class="upload-input" id="swagger-overview" type="file" accept="image/*" data-target="preview-swagger-overview" />
+              <div class="placeholder">Selecciona aqui la vista general de Swagger.</div>
+              <img id="preview-swagger-overview" alt="Vista general de Swagger" style="display:none" />
+            </article>
+
+            <article class="shot">
+              <h3>Datasets</h3>
+              <p>Captura del modulo <code>/api/datasets</code>.</p>
+              <label class="upload-label" for="swagger-datasets">Cargar captura</label>
+              <input class="upload-input" id="swagger-datasets" type="file" accept="image/*" data-target="preview-swagger-datasets" />
+              <div class="placeholder">Selecciona aqui la documentacion de datasets.</div>
+              <img id="preview-swagger-datasets" alt="Datasets en Swagger" style="display:none" />
+            </article>
+
+            <article class="shot">
+              <h3>Daily Sales</h3>
+              <p>Captura del modulo <code>/api/daily-sales</code>.</p>
+              <label class="upload-label" for="swagger-daily-sales">Cargar captura</label>
+              <input class="upload-input" id="swagger-daily-sales" type="file" accept="image/*" data-target="preview-swagger-daily-sales" />
+              <div class="placeholder">Selecciona aqui la documentacion de daily sales.</div>
+              <img id="preview-swagger-daily-sales" alt="Daily sales en Swagger" style="display:none" />
+            </article>
+
+            <article class="shot">
+              <h3>Anomalies</h3>
+              <p>Captura del modulo <code>/api/anomalies</code>.</p>
+              <label class="upload-label" for="swagger-anomalies">Cargar captura</label>
+              <input class="upload-input" id="swagger-anomalies" type="file" accept="image/*" data-target="preview-swagger-anomalies" />
+              <div class="placeholder">Selecciona aqui la documentacion de anomalies.</div>
+              <img id="preview-swagger-anomalies" alt="Anomalies en Swagger" style="display:none" />
+            </article>
+
+            <article class="shot">
+              <h3>Endpoint de analisis</h3>
+              <p>Captura de <code>POST /api/anomalies/run/:datasetId</code>.</p>
+              <label class="upload-label" for="swagger-run-analysis">Cargar captura</label>
+              <input class="upload-input" id="swagger-run-analysis" type="file" accept="image/*" data-target="preview-swagger-run-analysis" />
+              <div class="placeholder">Selecciona aqui la documentacion del analisis.</div>
+              <img id="preview-swagger-run-analysis" alt="Analisis de anomalias en Swagger" style="display:none" />
+            </article>
+
+            <article class="shot">
+              <h3>README y plan del sprint</h3>
+              <p>Captura sugerida de la documentacion tecnica y la planeacion siguiente.</p>
+              <label class="upload-label" for="docs-readme-plan">Cargar captura</label>
+              <input class="upload-input" id="docs-readme-plan" type="file" accept="image/*" data-target="preview-docs-readme-plan" />
+              <div class="placeholder">Selecciona aqui la captura del README y plan.</div>
+              <img id="preview-docs-readme-plan" alt="README y plan del sprint" style="display:none" />
+            </article>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2>11. Planeacion de Sprint 4</h2>
+          <p>
+            El siguiente sprint se enfocara en pulir el backend actual y comprobar su correcto
+            funcionamiento con pruebas automatizadas y una revision completa del sistema.
+          </p>
+          <ol>
+            <li>Agregar unit testing para flujos y funciones clave.</li>
+            <li>Crear pruebas de endpoints para auth, datasets, daily sales y anomalies.</li>
+            <li>Revisar estabilidad del sistema completo y corregir errores encontrados.</li>
+            <li>Actualizar documentacion tecnica, reporte de pruebas y plan de Sprint 5.</li>
+          </ol>
+        </section>
+
+        <section class="section">
+          <h2>12. Conclusion</h2>
+          <p>
+            En Sprint 3 el equipo ya construyo la parte funcional mas importante del backend de
+            SalesGuard. Pasamos de autenticar usuarios a manejar datasets, registrar ventas y
+            detectar anomalias con una logica simple pero clara.
+          </p>
+          <p>
+            Tambien se mejoro la calidad de la entrega con Swagger, README, evidencia visual y una
+            planeacion concreta para Sprint 4, manteniendo la arquitectura sencilla del proyecto.
+          </p>
+          <div class="footer">
+            Documento preparado para demostracion, exportacion a PDF y anexo de capturas del Sprint 3.
+          </div>
+        </section>
+      </section>
+    </main>
+    <script>
+      const inputs = document.querySelectorAll(".upload-input");
+
+      inputs.forEach((input) => {
+        input.addEventListener("change", (event) => {
+          const file = event.target.files?.[0];
+          if (!file) {
+            return;
+          }
+
+          const targetId = input.getAttribute("data-target");
+          const image = document.getElementById(targetId);
+          const placeholder = input.nextElementSibling;
+
+          if (!image) {
+            return;
+          }
+
+          const reader = new FileReader();
+          reader.onload = () => {
+            image.src = reader.result;
+            image.style.display = "block";
+            if (placeholder && placeholder.classList.contains("placeholder")) {
+              placeholder.style.display = "none";
+            }
+          };
+          reader.readAsDataURL(file);
+        });
+      });
+    </script>
+  </body>
+</html>
