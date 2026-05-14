@@ -36,9 +36,10 @@ Notas importantes:
 - `NODE_ENV=production` ya lo define Render en runtime.
 - El Health Check Path recomendado es `/api/health`.
 - Este repo deja `npm run db:deploy` dentro del start command para no depender de Pre-Deploy Command.
+- Si vas a mostrar la UI minima integrada, la ruta publica es `/demo/`.
 - Si se va a mostrar Google login en produccion, `GOOGLE_REDIRECT_URI` debe ser `https://TU-SERVICIO.onrender.com/api/auth/google/callback`.
 - Esa misma URL debe registrarse en Google Cloud Console.
-- Si la UI minima vive fuera de este repo, sus URLs publicas deben usarse en `GOOGLE_AUTH_SUCCESS_REDIRECT` y `GOOGLE_AUTH_FAILURE_REDIRECT`.
+- Para la UI integrada, usa `https://TU-SERVICIO.onrender.com/demo/` en `GOOGLE_AUTH_SUCCESS_REDIRECT` y `GOOGLE_AUTH_FAILURE_REDIRECT`.
 
 ## Preparacion local para la demo
 
@@ -49,8 +50,8 @@ Notas importantes:
 5. Ejecutar `npm run db:migrate`.
 6. Ejecutar `npm run dev`.
 7. Confirmar `http://localhost:3000/api/health`.
-8. Si vas a mostrar Google login, validar las variables de OAuth y el callback local `http://localhost:3000/api/auth/google/callback`.
-9. Si existe una UI minima externa, correrla por separado.
+8. Si vas a mostrar la UI minima, abrir `http://localhost:3000/demo/`.
+9. Si vas a mostrar Google login, validar las variables de OAuth y el callback local `http://localhost:3000/api/auth/google/callback`.
 
 ## Datos sugeridos para la demo
 
@@ -79,18 +80,16 @@ Ventas diarias sugeridas:
 ## Flujo recomendado del demo final
 
 1. Mostrar `GET /api` y `GET /api/health`.
-2. Hacer `POST /api/auth/register` o `POST /api/auth/login`.
-3. Mostrar `GET /api/auth/me`.
-4. Si aplica, explicar `GET /api/auth/google` y el callback configurado.
-5. Crear un dataset con `POST /api/datasets`.
-6. Registrar ventas con `POST /api/daily-sales`.
-7. Ejecutar `POST /api/anomalies/run/:datasetId`.
-8. Mostrar `GET /api/anomalies` y explicar el z-score.
-9. Mostrar el email en modo demo o el envio SMTP si esta configurado.
-10. Mostrar Swagger en `GET /docs`.
-11. Ejecutar `npm run build -- --noEmit`.
-12. Ejecutar `npm test` si quieres cerrar el demo con validacion automatizada.
-13. Si el deploy ya esta listo, abrir la URL publica de Render y repetir `GET /api/health` o `/docs`.
+2. Abrir `/demo/` para mostrar la UI minima.
+3. Hacer login con Google desde la UI o usar Swagger si el OAuth aun no esta configurado.
+4. Crear un dataset.
+5. Registrar ventas con la UI.
+6. Ejecutar el analisis desde la UI.
+7. Mostrar anomalías detectadas y explicar el z-score.
+8. Mostrar Swagger en `GET /docs`.
+9. Ejecutar `npm run build -- --noEmit`.
+10. Ejecutar `npm test` si quieres cerrar el demo con validacion automatizada.
+11. Si el deploy ya esta listo, abrir la URL publica de Render y repetir `GET /api/health`, `/demo/` o `/docs`.
 
 ## Archivos utiles para la presentacion
 

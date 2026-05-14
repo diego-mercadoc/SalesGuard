@@ -25,8 +25,9 @@ El proyecto se mantiene simple a proposito. La arquitectura base del backend sig
 - Autenticacion: JWT y Google OAuth
 - Tests: Jest + Supertest
 - Documentacion de endpoints: Swagger en `/docs`
+- UI minima de demo: HTML + JS servida en `/demo`
 
-Este repositorio no incluye un frontend dedicado. Si el equipo usa una UI minima en otro repo o proceso, esa UI se corre por separado y consume esta API.
+Este repositorio no incluye un frontend separado ni una SPA compleja. La UI de demo es una pagina estatica minima servida por el mismo backend para mostrar el flujo principal del sistema.
 
 ## Requisitos
 
@@ -62,8 +63,8 @@ Copia `.env.example` a `.env` para trabajar localmente.
 | `GOOGLE_CLIENT_ID` | solo si usas Google login | client id de OAuth |
 | `GOOGLE_CLIENT_SECRET` | solo si usas Google login | client secret de OAuth |
 | `GOOGLE_REDIRECT_URI` | solo si usas Google login | callback del backend, por ejemplo `http://localhost:3000/api/auth/google/callback` en local |
-| `GOOGLE_AUTH_SUCCESS_REDIRECT` | opcional | URL de la UI para redirigir con `token`, `userId` y `email` |
-| `GOOGLE_AUTH_FAILURE_REDIRECT` | opcional | URL de la UI para redirigir errores de Google OAuth |
+| `GOOGLE_AUTH_SUCCESS_REDIRECT` | opcional | URL de la UI para redirigir con `token`, `userId` y `email`; para la demo integrada usa `http://localhost:3000/demo/` |
+| `GOOGLE_AUTH_FAILURE_REDIRECT` | opcional | URL de la UI para redirigir errores de Google OAuth; para la demo integrada usa `http://localhost:3000/demo/` |
 | `EMAIL_HOST` | opcional | host SMTP para notificaciones |
 | `EMAIL_PORT` | opcional | puerto SMTP |
 | `EMAIL_USER` | opcional | usuario SMTP |
@@ -121,17 +122,29 @@ La API queda disponible en:
 
 - `http://localhost:3000/api`
 - `http://localhost:3000/api/health`
+- `http://localhost:3000/demo/`
 - `http://localhost:3000/docs`
 
-## Backend y UI si van separados
+## UI minima de demo
 
-En este repo solo vive el backend.
+La UI minima ya vive dentro de este mismo repo en `public/demo` y se sirve desde el backend en `/demo/`.
 
-- Para desarrollo normal, basta con correr `npm run dev`.
-- Si existe una UI minima externa, debes correrla en su propio repo o proceso.
-- Esa UI debe consumir la API en `http://localhost:3000/api` o en la URL de Render.
-- Para el flujo de Google login con UI, configura `GOOGLE_AUTH_SUCCESS_REDIRECT` y `GOOGLE_AUTH_FAILURE_REDIRECT` con URLs de esa UI.
-- Si no hay UI disponible, el flujo se puede demostrar desde Swagger/Postman porque el callback de Google puede responder JSON.
+Flujo visual cubierto:
+
+- pantalla inicial con login de Google
+- listado y creacion de datasets
+- seleccion de dataset
+- registro de ventas diarias
+- ejecucion de analisis
+- listado de anomalias detectadas
+
+Para usarla localmente:
+
+- corre `npm run dev`
+- abre `http://localhost:3000/demo/`
+- configura `GOOGLE_AUTH_SUCCESS_REDIRECT` y `GOOGLE_AUTH_FAILURE_REDIRECT` apuntando a `http://localhost:3000/demo/`
+
+La UI guarda el token del callback de Google en `localStorage` y luego consume la API autenticada con `Bearer token`.
 
 ## Login con Google
 
@@ -155,6 +168,13 @@ https://TU-SERVICIO.onrender.com/api/auth/google/callback
 ```
 
 Ese callback de produccion tambien debe registrarse en Google Cloud Console.
+
+Si quieres usar la UI integrada en produccion, configura tambien:
+
+```text
+GOOGLE_AUTH_SUCCESS_REDIRECT=https://TU-SERVICIO.onrender.com/demo/
+GOOGLE_AUTH_FAILURE_REDIRECT=https://TU-SERVICIO.onrender.com/demo/
+```
 
 ## Flujo principal del sistema
 
@@ -210,8 +230,9 @@ Notas de deploy:
 - `NODE_ENV=production` lo asigna Render en runtime; puedes dejarlo explicito si quieres, pero no es obligatorio para este proyecto.
 - Health Check Path recomendado: `/api/health`.
 - Este repo usa `npm run db:deploy` dentro de `npm run render:start` para mantener el deploy simple en entornos estudiantiles. Si usas un plan de Render con Pre-Deploy Command, puedes mover ahi las migraciones.
+- Si quieres mostrar la UI minima de demo, la ruta publica sera `https://TU-SERVICIO.onrender.com/demo/`.
 - Si vas a mostrar Google login en produccion, actualiza `GOOGLE_REDIRECT_URI` a la URL publica del servicio y registra la misma URL en Google Cloud Console.
-- Si vas a mostrar una UI externa, usa sus URLs publicas en `GOOGLE_AUTH_SUCCESS_REDIRECT` y `GOOGLE_AUTH_FAILURE_REDIRECT`.
+- Para la UI integrada, usa `https://TU-SERVICIO.onrender.com/demo/` en `GOOGLE_AUTH_SUCCESS_REDIRECT` y `GOOGLE_AUTH_FAILURE_REDIRECT`.
 
 ## Endpoints principales
 
@@ -223,6 +244,7 @@ Publicos:
 - `POST /api/auth/login`
 - `GET /api/auth/google`
 - `GET /api/auth/google/callback`
+- `GET /demo`
 - `GET /docs`
 
 Protegidos con `Bearer token`:
@@ -256,6 +278,7 @@ Rutas de usuarios:
 - `src/controllers/`: controladores HTTP
 - `src/routes/`: rutas de la API
 - `src/middlewares/`: middlewares globales
+- `public/demo/`: UI minima para la demostracion visual
 - `prisma/`: schema y migraciones
 - `tests/`: pruebas automatizadas
 - `docs/`: documentacion de apoyo
