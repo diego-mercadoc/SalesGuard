@@ -74,6 +74,10 @@ describe("Anomalies endpoints", () => {
       score: "2.2361",
       severity: "medium"
     });
+    expect(mockedPrisma.anomaly.findMany).toHaveBeenCalledWith({
+      where: undefined,
+      orderBy: [{ date: "asc" }, { id: "asc" }]
+    });
   });
 
   it("GET /api/anomalies/:id returns 404 when the anomaly does not exist", async () => {

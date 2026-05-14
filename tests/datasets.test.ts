@@ -85,9 +85,13 @@ describe("Dataset endpoints", () => {
         userId: datasets[0].userId
       })
     ]);
+    expect(mockPrisma.dataset.findMany).toHaveBeenCalledWith({
+      where: { userId: 1 },
+      orderBy: { id: "asc" }
+    });
   });
 
-  it("creates a dataset successfully", async () => {
+  it("creates a dataset successfully for the authenticated user", async () => {
     const token = await loginAndGetToken();
     const dataset = buildDataset();
 
@@ -99,7 +103,7 @@ describe("Dataset endpoints", () => {
       .send({
         name: dataset.name,
         description: dataset.description,
-        userId: dataset.userId
+        userId: 999
       });
 
     expect(response.status).toBe(201);
@@ -112,6 +116,13 @@ describe("Dataset endpoints", () => {
         userId: dataset.userId
       })
     );
+    expect(mockPrisma.dataset.create).toHaveBeenCalledWith({
+      data: {
+        name: dataset.name,
+        description: dataset.description,
+        userId: 1
+      }
+    });
   });
 
   it("returns 404 when the dataset does not exist", async () => {
@@ -126,6 +137,24 @@ describe("Dataset endpoints", () => {
     expect(response.status).toBe(404);
     expect(response.body).toEqual({
       message: "Dataset no encontrado"
+    });
+  });
+
+  it("returns 403 when trying to access a dataset from another user", async () => {
+    const token = await loginAndGetToken();
+
+    mockPrisma.dataset.findUnique.mockResolvedValueOnce({
+      ...buildDataset(),
+      userId: 2
+    });
+
+    const response = await request(app)
+      .get("/api/datasets/10")
+      .set("Authorization", `Bearer ${token}`);
+
+    expect(response.status).toBe(403);
+    expect(response.body).toEqual({
+      message: "No tienes permiso para acceder a este dataset"
     });
   });
 });

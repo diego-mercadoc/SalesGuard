@@ -1,6 +1,7 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 
 import { prisma } from "../config/prisma";
+import { AuthenticatedRequest } from "../middlewares/auth.middleware";
 
 const parseDatasetId = (value: unknown): number | null => {
   if (typeof value !== "string") {
@@ -34,9 +35,28 @@ const parseUserId = (value: unknown): number | null => {
   return userId;
 };
 
-export const getAllDatasets = async (_request: Request, response: Response): Promise<void> => {
+const isAdmin = (request: AuthenticatedRequest): boolean => request.user?.role === "admin";
+
+const getAuthenticatedUserId = (request: AuthenticatedRequest): number | null => {
+  return request.user?.id ?? null;
+};
+
+export const getAllDatasets = async (
+  request: AuthenticatedRequest,
+  response: Response
+): Promise<void> => {
   try {
+    const authenticatedUserId = getAuthenticatedUserId(request);
+
+    if (!authenticatedUserId) {
+      response.status(401).json({
+        message: "Usuario no autenticado"
+      });
+      return;
+    }
+
     const datasets = await prisma.dataset.findMany({
+      where: isAdmin(request) ? undefined : { userId: authenticatedUserId },
       orderBy: { id: "asc" }
     });
 
@@ -48,9 +68,20 @@ export const getAllDatasets = async (_request: Request, response: Response): Pro
   }
 };
 
-export const getDatasetById = async (request: Request, response: Response): Promise<void> => {
+export const getDatasetById = async (
+  request: AuthenticatedRequest,
+  response: Response
+): Promise<void> => {
   try {
     const id = parseDatasetId(request.params.id);
+    const authenticatedUserId = getAuthenticatedUserId(request);
+
+    if (!authenticatedUserId) {
+      response.status(401).json({
+        message: "Usuario no autenticado"
+      });
+      return;
+    }
 
     if (!id) {
       response.status(400).json({
@@ -70,6 +101,13 @@ export const getDatasetById = async (request: Request, response: Response): Prom
       return;
     }
 
+    if (!isAdmin(request) && dataset.userId !== authenticatedUserId) {
+      response.status(403).json({
+        message: "No tienes permiso para acceder a este dataset"
+      });
+      return;
+    }
+
     response.status(200).json({ dataset });
   } catch {
     response.status(500).json({
@@ -78,12 +116,24 @@ export const getDatasetById = async (request: Request, response: Response): Prom
   }
 };
 
-export const createDataset = async (request: Request, response: Response): Promise<void> => {
+export const createDataset = async (
+  request: AuthenticatedRequest,
+  response: Response
+): Promise<void> => {
   try {
+    const authenticatedUserId = getAuthenticatedUserId(request);
     const name = parseName(request.body.name);
-    const userId = parseUserId(request.body.userId);
+    const requestedUserId =
+      request.body.userId === undefined ? null : parseUserId(request.body.userId);
     const description =
       typeof request.body.description === "string" ? request.body.description.trim() : undefined;
+
+    if (!authenticatedUserId) {
+      response.status(401).json({
+        message: "Usuario no autenticado"
+      });
+      return;
+    }
 
     if (!name) {
       response.status(400).json({
@@ -92,12 +142,14 @@ export const createDataset = async (request: Request, response: Response): Promi
       return;
     }
 
-    if (!userId) {
+    if (isAdmin(request) && request.body.userId !== undefined && !requestedUserId) {
       response.status(400).json({
         message: "UserId es requerido"
       });
       return;
     }
+
+    const userId = isAdmin(request) ? requestedUserId ?? authenticatedUserId : authenticatedUserId;
 
     const dataset = await prisma.dataset.create({
       data: {
@@ -118,9 +170,20 @@ export const createDataset = async (request: Request, response: Response): Promi
   }
 };
 
-export const updateDataset = async (request: Request, response: Response): Promise<void> => {
+export const updateDataset = async (
+  request: AuthenticatedRequest,
+  response: Response
+): Promise<void> => {
   try {
     const id = parseDatasetId(request.params.id);
+    const authenticatedUserId = getAuthenticatedUserId(request);
+
+    if (!authenticatedUserId) {
+      response.status(401).json({
+        message: "Usuario no autenticado"
+      });
+      return;
+    }
 
     if (!id) {
       response.status(400).json({
@@ -140,6 +203,13 @@ export const updateDataset = async (request: Request, response: Response): Promi
       return;
     }
 
+    if (!isAdmin(request) && existingDataset.userId !== authenticatedUserId) {
+      response.status(403).json({
+        message: "No tienes permiso para modificar este dataset"
+      });
+      return;
+    }
+
     const name = parseName(request.body.name);
 
     if (!name) {
@@ -152,14 +222,14 @@ export const updateDataset = async (request: Request, response: Response): Promi
     const parsedUserId =
       request.body.userId === undefined ? undefined : parseUserId(request.body.userId);
 
-    if (request.body.userId !== undefined && !parsedUserId) {
+    if (isAdmin(request) && request.body.userId !== undefined && !parsedUserId) {
       response.status(400).json({
         message: "UserId invalido"
       });
       return;
     }
 
-    const userId = parsedUserId ?? undefined;
+    const userId = isAdmin(request) ? parsedUserId ?? undefined : undefined;
 
     const description =
       typeof request.body.description === "string" ? request.body.description.trim() : undefined;
@@ -184,7 +254,10 @@ export const updateDataset = async (request: Request, response: Response): Promi
   }
 };
 
-export const deleteDataset = async (request: Request, response: Response): Promise<void> => {
+export const deleteDataset = async (
+  request: AuthenticatedRequest,
+  response: Response
+): Promise<void> => {
   try {
     const id = parseDatasetId(request.params.id);
 
