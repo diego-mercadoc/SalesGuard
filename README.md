@@ -31,6 +31,14 @@ Variables base:
 - `JWT_SECRET`
 - `DATABASE_URL`
 
+Variables para login con Google:
+
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_CLIENT_SECRET`
+- `GOOGLE_REDIRECT_URI`
+- `GOOGLE_AUTH_SUCCESS_REDIRECT`
+- `GOOGLE_AUTH_FAILURE_REDIRECT`
+
 Variables opcionales para email:
 
 - `EMAIL_HOST`
@@ -56,6 +64,8 @@ Publicos:
 - `GET /api/health`
 - `POST /api/auth/register`
 - `POST /api/auth/login`
+- `GET /api/auth/google`
+- `GET /api/auth/google/callback`
 - `GET /docs`
 
 Usuarios:
@@ -95,6 +105,17 @@ Rutas con permiso de admin:
 3. Registrar ventas diarias con `POST /api/daily-sales`.
 4. Ejecutar el analisis con `POST /api/anomalies/run/:datasetId`.
 5. Consultar anomalias guardadas con `GET /api/anomalies`.
+
+## Login con Google
+
+El flujo de Google OAuth queda preparado para Sprint 5:
+
+1. configurar las variables `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` y `GOOGLE_REDIRECT_URI`
+2. abrir `GET /api/auth/google`
+3. Google redirige a `GET /api/auth/google/callback`
+4. SalesGuard obtiene el email de Google, busca o crea el usuario local y genera el JWT del sistema
+
+Si `GOOGLE_AUTH_SUCCESS_REDIRECT` esta configurado, el callback redirige a esa URL con `token`, `userId` y `email`. Si no esta configurado, responde JSON. Si ocurre un error y `GOOGLE_AUTH_FAILURE_REDIRECT` esta configurado, redirige a esa URL con `message`.
 
 ## Ejemplos de requests
 
