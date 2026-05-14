@@ -1,7 +1,7 @@
 {
   "name": "salesguard",
   "version": "1.0.0",
-  "description": "Backend base de SalesGuard para Sprint 1",
+  "description": "API backend de SalesGuard con autenticacion, datasets de ventas y deteccion simple de anomalias",
   "main": "dist/server.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
@@ -11,7 +11,10 @@
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:studio": "prisma studio",
-    "start": "node dist/server.js"
+    "db:deploy": "prisma migrate deploy",
+    "start": "node dist/server.js",
+    "render:build": "npm run db:generate && npm run build",
+    "render:start": "npm run db:deploy && npm start"
   },
   "keywords": [
     "salesguard",
@@ -20,6 +23,9 @@
   ],
   "author": "Diego Mercado",
   "license": "ISC",
+  "engines": {
+    "node": ">=20 <26"
+  },
   "dependencies": {
     "@prisma/adapter-pg": "^7.7.0",
     "@prisma/client": "^7.7.0",
