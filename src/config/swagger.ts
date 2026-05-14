@@ -10,6 +10,10 @@ export const swaggerDocument = {
   },
   servers: [
     {
+      url: "/",
+      description: "Servidor actual"
+    },
+    {
       url: "http://localhost:3000",
       description: "Servidor local de desarrollo"
     }
