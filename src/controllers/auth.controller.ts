@@ -316,7 +316,19 @@ export const googleCallback = async (request: Request, response: Response): Prom
       token,
       user: formatUser(user)
     });
-  } catch {
+  } catch (error) {
+    console.error("Google login callback error", error);
+
+    if (env.nodeEnv !== "production") {
+      const detail = error instanceof Error ? error.message : String(error);
+
+      response.status(500).json({
+        message: "Error al completar login con Google",
+        detail
+      });
+      return;
+    }
+
     sendGoogleError(response, "Error al completar login con Google", 500);
   }
 };
