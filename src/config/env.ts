@@ -25,5 +25,10 @@ export const env = {
   jwtSecret: process.env.JWT_SECRET ?? "salesguard-secret",
   databaseUrl:
     process.env.DATABASE_URL ??
-    'postgresql://salesguard:salesguard@localhost:5432/salesguard?schema=public'
+    'postgresql://salesguard:salesguard@localhost:5432/salesguard?schema=public',
+  googleClientId: process.env.GOOGLE_CLIENT_ID ?? "",
+  googleClientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
+  googleRedirectUri: process.env.GOOGLE_REDIRECT_URI ?? "",
+  googleAuthSuccessRedirect: process.env.GOOGLE_AUTH_SUCCESS_REDIRECT ?? "",
+  googleAuthFailureRedirect: process.env.GOOGLE_AUTH_FAILURE_REDIRECT ?? ""
 };
