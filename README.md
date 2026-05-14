@@ -1,6 +1,6 @@
 # SalesGuard
 
-Backend de SalesGuard para Sprint 3 con autenticacion, datasets, ventas diarias y deteccion simple de anomalias.
+Backend de SalesGuard para Sprint 4 con autenticacion, datasets, ventas diarias, deteccion simple de anomalias y pruebas automatizadas.
 
 ## Modulos del sprint
 
@@ -15,6 +15,7 @@ Backend de SalesGuard para Sprint 3 con autenticacion, datasets, ventas diarias 
 
 - `npm run dev`: ejecuta el servidor en desarrollo
 - `npm run build`: compila TypeScript a `dist/`
+- `npm test`: ejecuta las pruebas automatizadas con Jest y Supertest
 - `npm run db:generate`: genera el cliente de Prisma
 - `npm run db:migrate`: aplica migraciones en desarrollo
 - `npm run db:studio`: abre Prisma Studio
@@ -56,6 +57,14 @@ Publicos:
 - `POST /api/auth/register`
 - `POST /api/auth/login`
 - `GET /docs`
+
+Usuarios:
+
+- `GET /api/users`
+- `GET /api/users/:id`
+- `POST /api/users`
+- `PUT /api/users/:id`
+- `DELETE /api/users/:id`
 
 Protegidos con `Bearer token`:
 
@@ -171,13 +180,17 @@ El endpoint `POST /api/anomalies/run/:datasetId` hace lo siguiente:
 - Swagger UI: [`/docs`](http://localhost:3000/docs)
 - Diagrama de base de datos: [`docs/database-diagram.md`](docs/database-diagram.md)
 - Plan de Sprint 3: [`docs/sprint-3-plan.md`](docs/sprint-3-plan.md)
+- Plan de Sprint 4: [`docs/sprint-4-plan.md`](docs/sprint-4-plan.md)
+- Evidencia de pruebas Sprint 4: [`docs/sprint-4-core-tests-evidence.md`](docs/sprint-4-core-tests-evidence.md)
+- Plan breve de Sprint 5: [`docs/sprint-5-plan.md`](docs/sprint-5-plan.md)
 
-## Entrega Sprint 3
+## Entrega Sprint 4
 
 - Evidencias del sprint: [`evidencias-sprint-3.html`](evidencias-sprint-3.html)
 - Checklist de demo: [`docs/demo-checklist.md`](docs/demo-checklist.md)
 - Planeacion de Sprint 4: [`docs/sprint-4-plan.md`](docs/sprint-4-plan.md)
-- Pull request base `sprint3-core`: `https://github.com/diego-mercadoc/SalesGuard/pull/2`
+- Evidencia de pruebas: [`docs/sprint-4-core-tests-evidence.md`](docs/sprint-4-core-tests-evidence.md)
+- Rama base consolidada: `sprint4-base`
 
 ## Estructura base
 
@@ -197,3 +210,5 @@ El endpoint `POST /api/anomalies/run/:datasetId` hace lo siguiente:
 - `docs/notion-board-alignment.md`: alineacion entre tablero de Notion y trabajo implementado
 - `docs/sprint-2-plan.md`: objetivos del Sprint 2
 - `docs/sprint-3-plan.md`: objetivos del Sprint 3
+- `docs/sprint-4-plan.md`: objetivos del Sprint 4
+- `docs/sprint-5-plan.md`: objetivos iniciales del Sprint 5

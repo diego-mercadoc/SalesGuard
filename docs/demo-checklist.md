@@ -1,4 +1,4 @@
-# SalesGuard - Demo checklist Sprint 3
+# SalesGuard - Demo checklist Sprint 4
 
 ## Preparacion
 
@@ -18,7 +18,7 @@ Dataset:
 ```json
 {
   "name": "Ventas Abril 2026",
-  "description": "Dataset para demo de Sprint 3",
+  "description": "Dataset para demo de Sprint 4",
   "userId": 1
 }
 ```
@@ -48,14 +48,17 @@ Ventas diarias sugeridas:
 9. Mostrar `GET /api/anomalies` y explicar el z-score.
 10. Mostrar en consola el email demo o el correo enviado si hay SMTP configurado.
 11. Probar Swagger en `GET /docs`.
-12. Mostrar el archivo `evidencias-sprint-3.html`.
-13. Mostrar el PR base `sprint3-core` y la distribucion del trabajo del equipo.
-14. Cerrar con la planeacion de Sprint 4.
+12. Ejecutar `npm run build -- --noEmit`.
+13. Ejecutar `npm test` y mostrar las 6 suites con 20 pruebas pasando.
+14. Mostrar `docs/sprint-4-core-tests-evidence.md`.
+15. Mostrar la rama base `sprint4-base` y la distribucion del trabajo del equipo.
+16. Cerrar con la planeacion de Sprint 5.
 
 ## Archivos de apoyo para la presentacion
 
 - `README.md`
-- `evidencias-sprint-3.html`
 - `docs/database-diagram.md`
 - `docs/sprint-3-plan.md`
 - `docs/sprint-4-plan.md`
+- `docs/sprint-4-core-tests-evidence.md`
+- `docs/sprint-5-plan.md`
