@@ -1,6 +1,6 @@
 # SalesGuard
 
-Backend de SalesGuard para Sprint 4 con autenticacion, datasets, ventas diarias, deteccion simple de anomalias y pruebas automatizadas.
+Backend de SalesGuard con autenticacion, datasets, ventas diarias, deteccion simple de anomalias, pruebas automatizadas y una UI minima de demo.
 
 ## Modulos del sprint
 
@@ -10,6 +10,7 @@ Backend de SalesGuard para Sprint 4 con autenticacion, datasets, ventas diarias,
 - generacion de anomalias por dataset usando z-score
 - notificacion por email simple cuando se detectan anomalias
 - documentacion con Swagger
+- UI minima de demo servida desde el backend
 
 ## Scripts
 
@@ -66,6 +67,7 @@ Publicos:
 - `POST /api/auth/login`
 - `GET /api/auth/google`
 - `GET /api/auth/google/callback`
+- `GET /demo`
 - `GET /docs`
 
 Usuarios:
@@ -116,6 +118,34 @@ El flujo de Google OAuth queda preparado para Sprint 5:
 4. SalesGuard obtiene el email de Google, busca o crea el usuario local y genera el JWT del sistema
 
 Si `GOOGLE_AUTH_SUCCESS_REDIRECT` esta configurado, el callback redirige a esa URL con `token`, `userId` y `email`. Si no esta configurado, responde JSON. Si ocurre un error y `GOOGLE_AUTH_FAILURE_REDIRECT` esta configurado, redirige a esa URL con `message`.
+
+Para usar la UI de demo local, configurar:
+
+```text
+GOOGLE_AUTH_SUCCESS_REDIRECT=http://localhost:3000/demo/
+GOOGLE_AUTH_FAILURE_REDIRECT=http://localhost:3000/demo/
+```
+
+## UI minima de demo
+
+La UI vive en `public/demo` y se sirve desde el mismo backend en:
+
+```text
+http://localhost:3000/demo/
+```
+
+Flujo cubierto:
+
+1. entrar a la pantalla de demo
+2. iniciar sesion con Google usando `GET /api/auth/google`
+3. ver datasets existentes
+4. crear un dataset
+5. abrir un dataset
+6. registrar ventas diarias
+7. ejecutar el analisis con `POST /api/anomalies/run/:datasetId`
+8. ver anomalias detectadas
+
+La UI guarda el token recibido del callback de Google en `localStorage` y lo envia como `Bearer token` en las llamadas protegidas.
 
 ## Ejemplos de requests
 

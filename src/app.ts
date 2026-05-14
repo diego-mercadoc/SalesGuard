@@ -1,6 +1,7 @@
 import cors from "cors";
 import express from "express";
 import morgan from "morgan";
+import path from "path";
 import swaggerUi from "swagger-ui-express";
 
 import { env } from "./config/env";
@@ -15,6 +16,7 @@ app.use(cors());
 app.use(morgan("dev"));
 app.use(express.json());
 
+app.use("/demo", express.static(path.join(process.cwd(), "public", "demo")));
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(env.apiPrefix, apiRouter);
 app.use(notFoundHandler);
