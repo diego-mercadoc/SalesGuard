@@ -1,6 +1,7 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 
 import { prisma } from "../config/prisma";
+import { AuthenticatedRequest } from "../middlewares/auth.middleware";
 
 const parseOptionalString = (value: string | undefined): string | undefined => {
   if (!value) {
@@ -33,6 +34,12 @@ const getEmailConfig = () => ({
   pass: parseOptionalString(process.env.EMAIL_PASS),
   from: parseOptionalString(process.env.EMAIL_FROM) ?? "salesguard@example.com"
 });
+
+const isAdmin = (request: AuthenticatedRequest): boolean => request.user?.role === "admin";
+
+const getAuthenticatedUserId = (request: AuthenticatedRequest): number | null => {
+  return request.user?.id ?? null;
+};
 
 const parseId = (value: unknown): number | null => {
   if (typeof value !== "string") {
@@ -126,9 +133,22 @@ const sendAnomaliesEmail = async (
   };
 };
 
-export const getAllAnomalies = async (_request: Request, response: Response): Promise<void> => {
+export const getAllAnomalies = async (
+  request: AuthenticatedRequest,
+  response: Response
+): Promise<void> => {
   try {
+    const authenticatedUserId = getAuthenticatedUserId(request);
+
+    if (!authenticatedUserId) {
+      response.status(401).json({
+        message: "Usuario no autenticado"
+      });
+      return;
+    }
+
     const anomalies = await prisma.anomaly.findMany({
+      where: isAdmin(request) ? undefined : { dataset: { userId: authenticatedUserId } },
       orderBy: [{ date: "asc" }, { id: "asc" }]
     });
 
@@ -140,9 +160,20 @@ export const getAllAnomalies = async (_request: Request, response: Response): Pr
   }
 };
 
-export const getAnomalyById = async (request: Request, response: Response): Promise<void> => {
+export const getAnomalyById = async (
+  request: AuthenticatedRequest,
+  response: Response
+): Promise<void> => {
   try {
     const id = parseId(request.params.id);
+    const authenticatedUserId = getAuthenticatedUserId(request);
+
+    if (!authenticatedUserId) {
+      response.status(401).json({
+        message: "Usuario no autenticado"
+      });
+      return;
+    }
 
     if (!id) {
       response.status(400).json({
@@ -152,7 +183,14 @@ export const getAnomalyById = async (request: Request, response: Response): Prom
     }
 
     const anomaly = await prisma.anomaly.findUnique({
-      where: { id }
+      where: { id },
+      include: {
+        dataset: {
+          select: {
+            userId: true
+          }
+        }
+      }
     });
 
     if (!anomaly) {
@@ -162,7 +200,16 @@ export const getAnomalyById = async (request: Request, response: Response): Prom
       return;
     }
 
-    response.status(200).json({ anomaly });
+    if (!isAdmin(request) && anomaly.dataset.userId !== authenticatedUserId) {
+      response.status(403).json({
+        message: "No tienes permiso para acceder a esta anomalia"
+      });
+      return;
+    }
+
+    const { dataset, ...anomalyData } = anomaly;
+
+    response.status(200).json({ anomaly: anomalyData });
   } catch {
     response.status(500).json({
       message: "Error al obtener anomalia"
@@ -170,9 +217,20 @@ export const getAnomalyById = async (request: Request, response: Response): Prom
   }
 };
 
-export const runAnomalyAnalysis = async (request: Request, response: Response): Promise<void> => {
+export const runAnomalyAnalysis = async (
+  request: AuthenticatedRequest,
+  response: Response
+): Promise<void> => {
   try {
     const datasetId = parseId(request.params.datasetId);
+    const authenticatedUserId = getAuthenticatedUserId(request);
+
+    if (!authenticatedUserId) {
+      response.status(401).json({
+        message: "Usuario no autenticado"
+      });
+      return;
+    }
 
     if (!datasetId) {
       response.status(400).json({
@@ -200,6 +258,13 @@ export const runAnomalyAnalysis = async (request: Request, response: Response): 
     if (!dataset) {
       response.status(404).json({
         message: "Dataset no encontrado"
+      });
+      return;
+    }
+
+    if (!isAdmin(request) && dataset.userId !== authenticatedUserId) {
+      response.status(403).json({
+        message: "No tienes permiso para analizar este dataset"
       });
       return;
     }

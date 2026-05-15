@@ -63,6 +63,10 @@ describe("Daily sales endpoints", () => {
       datasetId: 10,
       dailySales: "1500.50"
     });
+    expect(mockedPrisma.dailySales.findMany).toHaveBeenCalledWith({
+      where: undefined,
+      orderBy: [{ date: "asc" }, { id: "asc" }]
+    });
   });
 
   it("POST /api/daily-sales creates a daily sale", async () => {

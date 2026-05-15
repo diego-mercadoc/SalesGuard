@@ -1,6 +1,7 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 
 import { prisma } from "../config/prisma";
+import { AuthenticatedRequest } from "../middlewares/auth.middleware";
 
 const parseId = (value: unknown): number | null => {
   if (typeof value !== "string") {
@@ -51,9 +52,28 @@ const parseDailySalesValue = (value: unknown): number | null => {
   return Number(dailySales.toFixed(2));
 };
 
-export const getAllDailySales = async (_request: Request, response: Response): Promise<void> => {
+const isAdmin = (request: AuthenticatedRequest): boolean => request.user?.role === "admin";
+
+const getAuthenticatedUserId = (request: AuthenticatedRequest): number | null => {
+  return request.user?.id ?? null;
+};
+
+export const getAllDailySales = async (
+  request: AuthenticatedRequest,
+  response: Response
+): Promise<void> => {
   try {
+    const authenticatedUserId = getAuthenticatedUserId(request);
+
+    if (!authenticatedUserId) {
+      response.status(401).json({
+        message: "Usuario no autenticado"
+      });
+      return;
+    }
+
     const dailySales = await prisma.dailySales.findMany({
+      where: isAdmin(request) ? undefined : { dataset: { userId: authenticatedUserId } },
       orderBy: [{ date: "asc" }, { id: "asc" }]
     });
 
@@ -65,9 +85,20 @@ export const getAllDailySales = async (_request: Request, response: Response): P
   }
 };
 
-export const getDailySaleById = async (request: Request, response: Response): Promise<void> => {
+export const getDailySaleById = async (
+  request: AuthenticatedRequest,
+  response: Response
+): Promise<void> => {
   try {
     const id = parseId(request.params.id);
+    const authenticatedUserId = getAuthenticatedUserId(request);
+
+    if (!authenticatedUserId) {
+      response.status(401).json({
+        message: "Usuario no autenticado"
+      });
+      return;
+    }
 
     if (!id) {
       response.status(400).json({
@@ -77,7 +108,14 @@ export const getDailySaleById = async (request: Request, response: Response): Pr
     }
 
     const dailySale = await prisma.dailySales.findUnique({
-      where: { id }
+      where: { id },
+      include: {
+        dataset: {
+          select: {
+            userId: true
+          }
+        }
+      }
     });
 
     if (!dailySale) {
@@ -87,7 +125,16 @@ export const getDailySaleById = async (request: Request, response: Response): Pr
       return;
     }
 
-    response.status(200).json({ dailySale });
+    if (!isAdmin(request) && dailySale.dataset.userId !== authenticatedUserId) {
+      response.status(403).json({
+        message: "No tienes permiso para acceder a esta venta diaria"
+      });
+      return;
+    }
+
+    const { dataset, ...dailySaleData } = dailySale;
+
+    response.status(200).json({ dailySale: dailySaleData });
   } catch {
     response.status(500).json({
       message: "Error al obtener venta diaria"
@@ -95,11 +142,22 @@ export const getDailySaleById = async (request: Request, response: Response): Pr
   }
 };
 
-export const createDailySale = async (request: Request, response: Response): Promise<void> => {
+export const createDailySale = async (
+  request: AuthenticatedRequest,
+  response: Response
+): Promise<void> => {
   try {
+    const authenticatedUserId = getAuthenticatedUserId(request);
     const datasetId = parseId(request.body.datasetId);
     const date = parseDate(request.body.date);
     const dailySales = parseDailySalesValue(request.body.dailySales);
+
+    if (!authenticatedUserId) {
+      response.status(401).json({
+        message: "Usuario no autenticado"
+      });
+      return;
+    }
 
     if (!datasetId) {
       response.status(400).json({
@@ -129,6 +187,13 @@ export const createDailySale = async (request: Request, response: Response): Pro
     if (!dataset) {
       response.status(404).json({
         message: "Dataset no encontrado"
+      });
+      return;
+    }
+
+    if (!isAdmin(request) && dataset.userId !== authenticatedUserId) {
+      response.status(403).json({
+        message: "No tienes permiso para registrar ventas en este dataset"
       });
       return;
     }
@@ -152,9 +217,20 @@ export const createDailySale = async (request: Request, response: Response): Pro
   }
 };
 
-export const updateDailySale = async (request: Request, response: Response): Promise<void> => {
+export const updateDailySale = async (
+  request: AuthenticatedRequest,
+  response: Response
+): Promise<void> => {
   try {
     const id = parseId(request.params.id);
+    const authenticatedUserId = getAuthenticatedUserId(request);
+
+    if (!authenticatedUserId) {
+      response.status(401).json({
+        message: "Usuario no autenticado"
+      });
+      return;
+    }
 
     if (!id) {
       response.status(400).json({
@@ -164,12 +240,26 @@ export const updateDailySale = async (request: Request, response: Response): Pro
     }
 
     const existingDailySale = await prisma.dailySales.findUnique({
-      where: { id }
+      where: { id },
+      include: {
+        dataset: {
+          select: {
+            userId: true
+          }
+        }
+      }
     });
 
     if (!existingDailySale) {
       response.status(404).json({
         message: "Venta diaria no encontrada"
+      });
+      return;
+    }
+
+    if (!isAdmin(request) && existingDailySale.dataset.userId !== authenticatedUserId) {
+      response.status(403).json({
+        message: "No tienes permiso para modificar esta venta diaria"
       });
       return;
     }
@@ -206,6 +296,13 @@ export const updateDailySale = async (request: Request, response: Response): Pro
     if (!dataset) {
       response.status(404).json({
         message: "Dataset no encontrado"
+      });
+      return;
+    }
+
+    if (!isAdmin(request) && dataset.userId !== authenticatedUserId) {
+      response.status(403).json({
+        message: "No tienes permiso para mover esta venta a otro dataset"
       });
       return;
     }
@@ -230,7 +327,10 @@ export const updateDailySale = async (request: Request, response: Response): Pro
   }
 };
 
-export const deleteDailySale = async (request: Request, response: Response): Promise<void> => {
+export const deleteDailySale = async (
+  request: AuthenticatedRequest,
+  response: Response
+): Promise<void> => {
   try {
     const id = parseId(request.params.id);
 
